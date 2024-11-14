@@ -4,8 +4,8 @@ import veiculo.model.Veiculo;
 
 public interface VeiculoRepository {
 	
-	public void procurarPorID(int id);
-	public void listarVeículos();
+	Veiculo procurarPorID(int id);
+	public void listarVeiculos();
 	public void cadastrar(Veiculo veiculo);
 	public void atualizar(Veiculo veiculo);
 	public void deletar(int id);
