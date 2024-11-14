@@ -1,10 +1,23 @@
 package veiculo;
 
 import java.util.Scanner;
+import veiculo.model.Veiculo;
+import veiculo.model.Carro;
+import veiculo.model.Moto;
 
 public class Menu {
 
 	public static void main(String[] args) {
+		
+		Carro c1 = new Carro(1, "A3", 2, "Audi", 2024, "Preto", "789456", 60000, true, 4, "Automatico");
+		c1.visualizar();
+		c1.vender();
+		c1.visualizar();
+		
+		Moto m1 = new Moto(2, "Biz", 3, "Honda", 2025, "Cinza", "10203040", 15000, true, 2);
+		m1.visualizar();
+		m1.vender();
+		m1.visualizar();
 		
 		Scanner scanner = new Scanner(System.in);
 		
@@ -73,6 +86,14 @@ public class Menu {
 				break;
 			}
 		}
+	}
+	
+	public static void sobre() {
+		System.out.println("\n*********************************************************");
+		System.out.println("Projeto Desenvolvido por: Vinícius Aquino");
+		System.out.println("Vinicius Aquino - contato.viniaquino@outlook.com");
+		System.out.println("github.com/viniaquino");
+		System.out.println("***********************************************************");
 	}
 
 }
