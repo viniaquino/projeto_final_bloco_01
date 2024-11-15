@@ -3,13 +3,14 @@ package veiculo.controller;
 import java.util.ArrayList;
 import java.util.List;
 
+import veiculo.exception.VeiculoVendidoException;
 import veiculo.model.Veiculo;
 import veiculo.repository.VeiculoRepository;
 
 public class VeiculoController implements VeiculoRepository {
 	
 	private List<Veiculo> listaVeiculos = new ArrayList<Veiculo>();
-	int id = 0;
+	private int idCounter = 1;
 	
 	@Override
 	public Veiculo procurarPorID(int id) {
@@ -27,15 +28,16 @@ public class VeiculoController implements VeiculoRepository {
 	        System.out.println("Nenhum veículo cadastrado.");
 	    } else {
 	        for (Veiculo veiculo : listaVeiculos) {
-	            System.out.println("ID: " + veiculo.getIdVeiculo() + ", Nome: " + veiculo.getNome() + ", Marca: " + veiculo.getMarca() + ", Preço: " + veiculo.getPreco());
+	            System.out.println("ID: " + veiculo.getIdVeiculo() + ", Nome: " + veiculo.getNome() + ", Marca: " + veiculo.getMarca() + ", Cor: " + veiculo.getCor() + ", Preço: " + veiculo.getPreco());
 	        }
 	    }
 	}
 
 	@Override
 	public void cadastrar(Veiculo veiculo) {
+		veiculo.setIdVeiculo(idCounter++);
 		listaVeiculos.add(veiculo);
-		System.out.println("\nO veículo com id: " + veiculo.getIdVeiculo() + " foi cadastrado com sucesso!");
+		System.out.println("\nO veículo: " + veiculo.getNome() + " com id: " + veiculo.getIdVeiculo() + " foi cadastrado com sucesso!");
 	}
 
 	@Override
@@ -62,10 +64,14 @@ public class VeiculoController implements VeiculoRepository {
     }
 
 	@Override
-	public void vender(int id, boolean disponivel) {
+	public void vender(int id, boolean disponivel) throws VeiculoVendidoException {
         Veiculo veiculo = procurarPorID(id);
         if (veiculo != null) {
+        	if (!veiculo.isDisponivel()) {
+				throw new VeiculoVendidoException("O veículo com ID: " + id + " já foi vendido!");
+			}
             veiculo.setDisponivel(false);
+            listaVeiculos.remove(veiculo);
             System.out.println("Veículo vendido com sucesso!");
         } else {
             System.out.println("Veículo não encontrado!");

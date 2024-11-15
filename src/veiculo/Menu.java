@@ -3,6 +3,7 @@ package veiculo;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 import veiculo.controller.VeiculoController;
+import veiculo.exception.VeiculoVendidoException;
 import veiculo.model.Carro;
 import veiculo.model.Moto;
 import veiculo.model.Veiculo;
@@ -68,6 +69,8 @@ public class Menu {
 			    nome = scanner.nextLine();
 			    System.out.println("Digite a marca do veículo: ");
 			    marca = scanner.nextLine();
+			    System.out.println("Digite a cor do Veículo: ");
+			    cor = scanner.nextLine();
 			    System.out.println("Digite o ano de fabricação do veículo: ");
 			    ano = scanner.nextInt();
 			    scanner.skip("\\R?");
@@ -75,6 +78,7 @@ public class Menu {
 			    placa = scanner.nextLine();
 			    System.out.println("Digite o preço do veículo: ");
 			    preco = scanner.nextFloat();
+			    scanner.skip("\\R?");
 
 			    if (preco <= 0) {
 			        System.out.println("Preço inválido! O preço informado não pode ser negativo!");
@@ -104,12 +108,13 @@ public class Menu {
 			    }
 			    
 			    veiculos.cadastrar(veiculo);
-				
+			    keyPress();
 				break;
 				
 			case 2:
 				System.out.println("Listar todos os Veículos\n\n");
 				veiculos.listarVeiculos();
+				keyPress();
 				break;
 				
 			case 3:
@@ -118,8 +123,31 @@ public class Menu {
 				System.out.println("Digite o ID do Veículo: ");
 				idVeiculo = scanner.nextInt();
 				
-				veiculos.procurarPorID(idVeiculo);
+				Veiculo veiculoSelecionado = veiculos.procurarPorID(idVeiculo);
 				
+				if (veiculoSelecionado != null) {
+			        System.out.println("\nVeículo selecionado:");
+			        System.out.println("ID: " + veiculoSelecionado.getIdVeiculo());
+			        System.out.println("Nome: " + veiculoSelecionado.getNome());
+			        System.out.println("Marca: " + veiculoSelecionado.getMarca());
+			        System.out.println("Ano: " + veiculoSelecionado.getAno());
+			        System.out.println("Cor: " + veiculoSelecionado.getCor());
+			        System.out.println("Placa: " + veiculoSelecionado.getPlaca());
+			        System.out.println("Preço: " + veiculoSelecionado.getPreco());
+			        System.out.println("Disponível: " + (veiculoSelecionado.isDisponivel() ? "Sim" : "Não"));
+			        
+			        if (veiculoSelecionado instanceof Carro) {
+			            Carro carro = (Carro) veiculoSelecionado;
+			            System.out.println("Número de portas: " + carro.getNumeroPortas());
+			            System.out.println("Câmbio: " + carro.getCambio());
+			        } else if (veiculoSelecionado instanceof Moto) {
+			            Moto moto = (Moto) veiculoSelecionado;
+			            System.out.println("Tipo de moto: " + moto.getTipoMoto());
+			        }
+			    } else {
+			        System.out.println("Veículo não encontrado com o ID: " + idVeiculo);
+			    }
+				keyPress();
 				break;
 				
 			case 4:
@@ -141,8 +169,8 @@ public class Menu {
 				    
 				    System.out.println("\nInforme os novos dados para atualizar o veículo");
 				    
-				    System.out.println("Digite o novo nome do veículo (atualmente: " + buscaVeiculo.getNome() + "): ");
-				    scanner.nextLine(); 
+				    System.out.println("\nDigite o novo nome do veículo (atualmente: " + buscaVeiculo.getNome() + "): ");
+				    scanner.nextLine();
 				    String novoNome = scanner.nextLine();
 				    if (!novoNome.isEmpty()) {
 				        buscaVeiculo.setNome(novoNome);
@@ -155,7 +183,6 @@ public class Menu {
 				    }
 				    
 				    System.out.println("Digite a nova cor do veículo (atualmente: " + buscaVeiculo.getCor() + "): ");
-				    scanner.nextLine(); 
 				    String novaCor = scanner.nextLine();
 				    if (!novaCor.isEmpty()) {
 				        buscaVeiculo.setCor(novaCor);
@@ -192,12 +219,11 @@ public class Menu {
 				        }
 				        
 				        veiculos.atualizar(buscaVeiculo);
-				        
-				        System.out.println("\nVeículo atualizado com sucesso!");
 				    } else {
 				    	System.out.println("Veículo não encontrado com o ID: " + idVeiculo);
 				    }
 				}
+				keyPress();
 				break;
 				
 			case 5:
@@ -207,7 +233,7 @@ public class Menu {
 				idVeiculo = scanner.nextInt();
 				
 				veiculos.deletar(idVeiculo);
-				
+				keyPress();
 				break;
 				
 			case 6:
@@ -216,14 +242,26 @@ public class Menu {
 				System.out.println("Digite o ID do veículo que deseja vender: ");
 				idVeiculo = scanner.nextInt();
 				
-				veiculos.vender(idVeiculo, disponivel);
+				try {
+					veiculos.vender(idVeiculo, disponivel);
+				} catch (VeiculoVendidoException e) {
+					System.err.println("Erro: " + e.getMessage());
+				}
+				keyPress();
 				break;
 
 			default:
 				System.out.println("\nOpção Inválida!\n");
+				keyPress();
 				break;
 			}
 		}
+	}
+	
+	public static void keyPress() {
+	    System.out.println("\nPressione Enter para continuar...");
+	    Scanner scanner = new Scanner(System.in);
+	    scanner.nextLine();
 	}
 	
 	public static void sobre() {
